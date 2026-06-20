@@ -40,7 +40,11 @@ canvas.fc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 @keyframes m3{0%,100%{height:6px}50%{height:14px}}
 @keyframes m4{0%,100%{height:10px}50%{height:5px}}
 
-/* Scroll Indicator */
+/* Music hint */
+.music-hint{position:fixed;bottom:62px;right:8px;z-index:1001;padding:5px 12px;border-radius:12px;font:300 8px/1.2 Poppins,sans-serif;letter-spacing:1px;color:var(--gd);background:rgba(10,92,54,.7);backdrop-filter:blur(6px);border:1px solid rgba(225,198,153,.15);opacity:0;pointer-events:none;transition:opacity .4s;white-space:nowrap;text-align:center}
+.music-hint.v{opacity:.85;animation:hintPulse 2s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:.7;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+
 .scroll-ind{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:100;text-align:center;opacity:0;pointer-events:none;transition:opacity .6s}
 .scroll-ind.v{opacity:1}
 .scroll-ind-inner{animation:sib 2s ease-in-out infinite}
@@ -50,7 +54,6 @@ canvas.fc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 .scroll-ind .arrow-down{width:16px;height:16px;margin:4px auto 0;border-right:1px solid var(--gd);border-bottom:1px solid var(--gd);transform:rotate(45deg);opacity:.5;animation:arrd 1.5s ease-in-out infinite}
 @keyframes arrd{0%,100%{opacity:.3;transform:rotate(45deg) translate(0,0)}50%{opacity:.7;transform:rotate(45deg) translate(3px,3px)}}
 
-/* Auto-scroll status toast */
 .as-toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:1001;padding:6px 18px;border-radius:16px;font:300 9px/1 Poppins,sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--gd);background:rgba(10,92,54,.6);backdrop-filter:blur(8px);border:1px solid rgba(225,198,153,.15);opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap}
 .as-toast.v{opacity:.8}
 
@@ -205,8 +208,8 @@ canvas.fc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 .dlk{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1px solid rgba(225,198,153,.2);border-radius:18px;color:var(--gd);font:400 10px/1 Poppins,sans-serif;text-decoration:none;transition:.3s}
 .dlk:hover{background:var(--gd);color:var(--em-d)}
 
-@media(max-width:380px){.hn{font-size:42px}.cn{font-size:48px}.cdn{font-size:36px}.cls-n{font-size:34px}.cele-t{font-size:22px}.cele-c{font-size:20px}}
-@media(min-width:768px){.hn{font-size:68px}.cn{font-size:80px}.inv-t{font-size:28px}.cdn{font-size:58px}.sec{padding:80px 40px}}
+@media(max-width:380px){.hn{font-size:42px}.cdn{font-size:36px}.cls-n{font-size:34px}.cele-t{font-size:22px}.cele-c{font-size:20px}}
+@media(min-width:768px){.hn{font-size:68px}.inv-t{font-size:28px}.cdn{font-size:58px}.sec{padding:80px 40px}}
 </style>
 </head>
 <body>
@@ -224,7 +227,15 @@ canvas.fc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 <div class="ctrl mus" id="mus" onclick="tgM()" title="Play Music">
 <div class="mb"><span></span><span></span><span></span><span></span></div>
 </div>
-<audio id="audio" loop preload="auto"><source src="music/wedding-music.mp3" type="audio/mpeg"></audio>
+
+<!-- Music hint for mobile -->
+<div class="music-hint" id="musicHint" data-t="musicHint">♪ Tap anywhere to start music</div>
+
+<!-- Audio element with mobile-friendly attributes -->
+<audio id="audio" loop preload="auto" playsinline>
+<source src="music/wedding-music.mp3" type="audio/mpeg">
+<source src="music/wedding-music.mp3" type="audio/mp3">
+</audio>
 
 <div class="scroll-ind" id="scrollInd">
 <div class="scroll-ind-inner">
@@ -234,7 +245,6 @@ canvas.fc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 </div>
 </div>
 
-<!-- Auto-scroll status toast -->
 <div class="as-toast" id="asToast"></div>
 
 <!-- HERO -->
@@ -301,9 +311,9 @@ canvas.fc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 <div class="img-ov"><p data-t="imOv">Our Forever Begins Here.</p></div>
 </div>
 </div>
-<button class="vp-btn an" onclick="openLB()" data-t="vpBtn">
+<button class="vp-btn an" onclick="openLB()">
 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-<span>View Photo</span>
+<span data-t="vpBtn">View Photo</span>
 </button>
 </section>
 
@@ -396,150 +406,172 @@ canvas.fc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 
 <script>
 const T={
-en:{hp1:"Son of Shri Ramdhan Rupchand Chanwal",hp2:"Daughter of Shri Gokul Narayan Reknod",htl:"Two hearts, one promise, and a beautiful forever begins.",cSub:"The Couple",cp1:"Son of Shri Ramdhan Rupchand Chanwal",cp2:"Daughter of Shri Gokul Narayan Reknod",cTag:"A love story blessed by time, written for forever.",iSub:"You Are Invited",iT:"With happy hearts, we invite you to celebrate this special day with us.",iPun:"Your presence will make our celebration even more meaningful.",sSub:"Save The Date",sLbl:"The Date Reveal",sDate:"Wednesday<br>24 June 2026",sPun:"The moment our forever begins.",imSub:"Our Moment",imOv:"Our Forever Begins Here.",vpBtn:"View Photo",cdSub:"Counting Down",cdPun:"Counting every heartbeat until the celebration begins.",days:"Days",hrs:"Hours",min:"Minutes",sec:"Seconds",celT:"🎉 The Celebration Has Begun! 🎉",evSub:"Wedding Events",evTit:"Celebrations",meh:"Mehendi Ceremony",mehD:"Tuesday, 23 June 2026",mehT:"6:30 PM onwards",mehL:"An evening of colours, laughter, and joy.",hal:"Haldi Ceremony",halD:"Wednesday, 24 June 2026",halT:"7:00 AM onwards",halL:"A morning filled with blessings and happiness.",wed:"Wedding Ceremony",wedD:"Wednesday, 24 June 2026",wedT:"2:35 PM",wedL:"The day two hearts become one beautiful story.",lSub:"Venue",vnm:"Mayuresh-2 Mangal Karyalaya",vad:"Kothali Road, Bhadgaon,<br>District Jalgaon",navB:"View Location",lPun:"We look forward to celebrating with you here.",gSub:"Blessings",gT:"Your presence and blessings are the greatest gift we could receive.",gPun:"Your love means more than any present.",clT:"We can't wait to celebrate this special day with you.",clF:"Thank you for being part of our journey.",fBy:"Designed & Developed by",dR:"Web Developer & Designer",dM:'"Want a beautiful website like this? Contact me."',scrollTxt:"Scroll Down",asOn:"Auto Scroll On",asOff:"Manual Scroll"},
-mr:{hp1:"श्री रामधन रुपचंद चांवल यांचे सुपुत्र",hp2:"श्री गोकुळ नारायण रेकनोड यांची सुकन्या",htl:"दोन हृदयं, एक वचन, आणि सुंदर सोबतची सुरुवात.",cSub:"वधू-वर",cp1:"श्री रामधन रुपचंद चांवल यांचे सुपुत्र",cp2:"श्री गोकुळ नारायण रेकनोड यांची सुकन्या",cTag:"काळाने आशीर्वादित, कायमस्वरूपी लिहिलेली प्रेमकथा.",iSub:"आपणास सादर निमंत्रण",iT:"आनंदाने भरलेल्या हृदयांसह, आम्ही तुम्हाला या विशेष दिवसाच्या उत्सवात सहभागी होण्यासाठी निमंत्रित करतो.",iPun:"तुमच्या उपस्थितीने आमचा उत्सव आणखी अर्थपूर्ण होईल.",sSub:"तारीख लक्षात ठेवा",sLbl:"तारीख प्रकटीकरण",sDate:"बुधवार<br>२४ जून २०२६",sPun:"आमचे कायमचे सुरू होण्याचा क्षण.",imSub:"आमचा क्षण",imOv:"आमचे कायमचे इथून सुरू होते.",vpBtn:"फोटो पहा",cdSub:"उलटी गणती",cdPun:"उत्सव सुरू होईपर्यंत प्रत्येक हृदयाचा ठोका मोजत आहोत.",days:"दिवस",hrs:"तास",min:"मिनिटे",sec:"सेकंद",celT:"🎉 उत्सव सुरू झाला! 🎉",evSub:"लग्न समारंभ",evTit:"उत्सव",meh:"मेहंदी समारंभ",mehD:"मंगळवार, २३ जून २०२६",mehT:"संध्याकाळी ६:३० पासून",mehL:"रंग, हसणे आणि आनंदाची संध्याकाळ.",hal:"हळदी समारंभ",halD:"बुधवार, २४ जून २०२६",halT:"सकाळी ७:०० पासून",halL:"आशीर्वाद आणि आनंदाने भरलेली सकाळ.",wed:"लग्न समारंभ",wedD:"बुधवार, २४ जून २०२६",wedT:"दुपारी २:३५",wedL:"दोन हृदयं एक सुंदर कथा बनतात तो दिवस.",lSub:"स्थळ",vnm:"मयुरेश-२ मंगल कार्यालय",vad:"कोथळी रोड, भडगाव,<br>जिल्हा जळगाव",navB:"स्थळ पहा",lPun:"तुमच्यासोबत इथे उत्सव साजरा करण्याची आम्हाला उत्सुकता आहे.",gSub:"आशीर्वाद",gT:"तुमची उपस्थिती आणि आशीर्वाद ही आम्हाला मिळालेली सर्वात मोठी भेट आहे.",gPun:"तुमच्या प्रेमापेक्षा मोठी भेट नाही.",clT:"तुमच्यासोबत हा विशेष दिवस साजरा करण्याची आम्ही वाट पाहत आहोत.",clF:"आमच्या प्रवासाचा भाग असल्याबद्दल धन्यवाद.",fBy:"डिझाइन आणि विकसित",dR:"वेब डेव्हलपर आणि डिझायनर",dM:'"अशी सुंदर वेबसाइट हवी आहे? संपर्क करा."',scrollTxt:"खाली स्क्रोल करा",asOn:"ऑटो स्क्रोल सुरू",asOff:"मॅन्युअल स्क्रोल"}
+en:{hp1:"Son of Shri Ramdhan Rupchand Chanwal",hp2:"Daughter of Shri Gokul Narayan Reknod",htl:"Two hearts, one promise, and a beautiful forever begins.",cSub:"The Couple",cTag:"A love story blessed by time, written for forever.",iSub:"You Are Invited",iT:"With happy hearts, we invite you to celebrate this special day with us.",iPun:"Your presence will make our celebration even more meaningful.",sSub:"Save The Date",sLbl:"The Date Reveal",sDate:"Wednesday<br>24 June 2026",sPun:"The moment our forever begins.",imSub:"Our Moment",imOv:"Our Forever Begins Here.",vpBtn:"View Photo",cdSub:"Counting Down",cdPun:"Counting every heartbeat until the celebration begins.",days:"Days",hrs:"Hours",min:"Minutes",sec:"Seconds",celT:"🎉 The Celebration Has Begun! 🎉",evSub:"Wedding Events",evTit:"Celebrations",meh:"Mehendi Ceremony",mehD:"Tuesday, 23 June 2026",mehT:"6:30 PM onwards",mehL:"An evening of colours, laughter, and joy.",hal:"Haldi Ceremony",halD:"Wednesday, 24 June 2026",halT:"7:00 AM onwards",halL:"A morning filled with blessings and happiness.",wed:"Wedding Ceremony",wedD:"Wednesday, 24 June 2026",wedT:"2:35 PM",wedL:"The day two hearts become one beautiful story.",lSub:"Venue",vnm:"Mayuresh-2 Mangal Karyalaya",vad:"Kothali Road, Bhadgaon,<br>District Jalgaon",navB:"View Location",lPun:"We look forward to celebrating with you here.",gSub:"Blessings",gT:"Your presence and blessings are the greatest gift we could receive.",gPun:"Your love means more than any present.",clT:"We can't wait to celebrate this special day with you.",clF:"Thank you for being part of our journey.",fBy:"Designed & Developed by",dR:"Web Developer & Designer",dM:'"Want a beautiful website like this? Contact me."',scrollTxt:"Scroll Down",asOn:"Auto Scroll On",asOff:"Manual Scroll",musicHint:"♪ Tap anywhere to start music"},
+mr:{hp1:"श्री रामधन रुपचंद चांवल यांचे सुपुत्र",hp2:"श्री गोकुळ नारायण रेकनोड यांची सुकन्या",htl:"दोन हृदयं, एक वचन, आणि सुंदर सोबतची सुरुवात.",cSub:"वधू-वर",cTag:"काळाने आशीर्वादित, कायमस्वरूपी लिहिलेली प्रेमकथा.",iSub:"आपणास सादर निमंत्रण",iT:"आनंदाने भरलेल्या हृदयांसह, आम्ही तुम्हाला या विशेष दिवसाच्या उत्सवात सहभागी होण्यासाठी निमंत्रित करतो.",iPun:"तुमच्या उपस्थितीने आमचा उत्सव आणखी अर्थपूर्ण होईल.",sSub:"तारीख लक्षात ठेवा",sLbl:"तारीख प्रकटीकरण",sDate:"बुधवार<br>२४ जून २०२६",sPun:"आमचे कायमचे सुरू होण्याचा क्षण.",imSub:"आमचा क्षण",imOv:"आमचे कायमचे इथून सुरू होते.",vpBtn:"फोटो पहा",cdSub:"उलटी गणती",cdPun:"उत्सव सुरू होईपर्यंत प्रत्येक हृदयाचा ठोका मोजत आहोत.",days:"दिवस",hrs:"तास",min:"मिनिटे",sec:"सेकंद",celT:"🎉 उत्सव सुरू झाला! 🎉",evSub:"लग्न समारंभ",evTit:"उत्सव",meh:"मेहंदी समारंभ",mehD:"मंगळवार, २३ जून २०२६",mehT:"संध्याकाळी ६:३० पासून",mehL:"रंग, हसणे आणि आनंदाची संध्याकाळ.",hal:"हळदी समारंभ",halD:"बुधवार, २४ जून २०२६",halT:"सकाळी ७:०० पासून",halL:"आशीर्वाद आणि आनंदाने भरलेली सकाळ.",wed:"लग्न समारंभ",wedD:"बुधवार, २४ जून २०२६",wedT:"दुपारी २:३५",wedL:"दोन हृदयं एक सुंदर कथा बनतात तो दिवस.",lSub:"स्थळ",vnm:"मयुरेश-२ मंगल कार्यालय",vad:"कोथळी रोड, भडगाव,<br>जिल्हा जळगाव",navB:"स्थळ पहा",lPun:"तुमच्यासोबत इथे उत्सव साजरा करण्याची आम्हाला उत्सुकता आहे.",gSub:"आशीर्वाद",gT:"तुमची उपस्थिती आणि आशीर्वाद ही आम्हाला मिळालेली सर्वात मोठी भेट आहे.",gPun:"तुमच्या प्रेमापेक्षा मोठी भेट नाही.",clT:"तुमच्यासोबत हा विशेष दिवस साजरा करण्याची आम्ही वाट पाहत आहोत.",clF:"आमच्या प्रवासाचा भाग असल्याबद्दल धन्यवाद.",fBy:"डिझाइन आणि विकसित",dR:"वेब डेव्हलपर आणि डिझायनर",dM:'"अशी सुंदर वेबसाइट हवी आहे? संपर्क करा."',scrollTxt:"खाली स्क्रोल करा",asOn:"ऑटो स्क्रोल सुरू",asOff:"मॅन्युअल स्क्रोल",musicHint:"♪ संगीत सुरू करण्यासाठी कुठेही टॅप करा"}
 };
 
 let lg='en',W,H;
-let musicStarted=false,musicPlaying=false,userPausedMusic=false;
-let autoScrolling=false,autoScrollRAF=null,resumeTimer=null,heroAnimDone=false;
 let scratchDone=false,celeDone=false,celeRunning=false,scrollIndHidden=false;
-
-function dL(){return(navigator.language||'').toLowerCase().startsWith('mr')?'mr':'en'}
-function setL(l){lg=l;document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('a',b.dataset.l===l));apT();sW()}
-function apT(){const t=T[lg];document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(t[k]&&!['invT','giftT','htl'].includes(el.id))el.innerHTML=t[k]})}
-
-// ========== MUSIC SYSTEM ==========
-const audioEl=document.getElementById('audio');
-audioEl.volume=0.3;
-
-function tryPlayMusic(){
-if(musicStarted||userPausedMusic)return;
-audioEl.play().then(()=>{
-musicStarted=true;musicPlaying=true;
-document.getElementById('mus').classList.add('p');
-document.getElementById('mus').title='Pause Music';
-}).catch(()=>{/* blocked, will retry on interaction */})
-}
-
-function startMusicOnInteraction(){
-if(musicStarted||userPausedMusic)return;
-tryPlayMusic();
-}
-
-// Listen for ANY user interaction to start music
-const interactionEvents=['touchstart','touchend','click','pointerdown','scroll','wheel','keydown'];
-function onFirstInteraction(){
-startMusicOnInteraction();
-}
-interactionEvents.forEach(ev=>{
-document.addEventListener(ev,onFirstInteraction,{passive:true,capture:true});
-});
-
-function tgM(){
-const m=document.getElementById('mus');
-if(musicPlaying){
-audioEl.pause();
-musicPlaying=false;
-userPausedMusic=true;
-m.classList.remove('p');
-m.title='Play Music';
-}else{
-userPausedMusic=false;
-audioEl.play().then(()=>{
-musicStarted=true;musicPlaying=true;
-m.classList.add('p');
-m.title='Pause Music';
-}).catch(()=>{});
-}
-}
-
-// ========== AUTO-SCROLL SYSTEM ==========
-const RESUME_DELAY=5000;
-const SCROLL_SPEED=0.8;
+let autoScrolling=false,autoScrollRAF=null,resumeTimer=null,heroAnimDone=false;
 let toastTimer=null;
 
-function showToast(key){
-const toast=document.getElementById('asToast');
-const t=T[lg];
-toast.textContent=t[key]||key;
-toast.classList.add('v');
-clearTimeout(toastTimer);
-toastTimer=setTimeout(()=>toast.classList.remove('v'),2000);
+// ========== ROBUST MOBILE MUSIC SYSTEM ==========
+const audioEl=document.getElementById('audio');
+const musicHintEl=document.getElementById('musicHint');
+const musBtnEl=document.getElementById('mus');
+
+let musicState={
+  started:false,
+  playing:false,
+  userPaused:false,
+  gestureListenersAttached:false,
+  loadAttempted:false
+};
+
+function initAudio(){
+  audioEl.volume=0.6;
+  audioEl.loop=true;
+  audioEl.preload='auto';
+  audioEl.setAttribute('playsinline','');
+  audioEl.load();
+  musicState.loadAttempted=true;
 }
 
-function atBottom(){
-return(window.innerHeight+window.scrollY)>=(document.body.scrollHeight-5);
+function musicSuccess(){
+  musicState.started=true;
+  musicState.playing=true;
+  musicState.userPaused=false;
+  musBtnEl.classList.add('p');
+  musBtnEl.title='Pause Music';
+  hideHint();
+  removeGestureListeners();
 }
 
-function startAutoScroll(){
-if(autoScrolling)return;
-autoScrolling=true;
-showToast('asOn');
-function step(){
-if(!autoScrolling)return;
-if(atBottom()){autoScrolling=false;return}
-window.scrollBy(0,SCROLL_SPEED);
-autoScrollRAF=requestAnimationFrame(step);
-}
-autoScrollRAF=requestAnimationFrame(step);
+function hideHint(){
+  musicHintEl.classList.remove('v');
 }
 
-function pauseAutoScroll(){
-if(!autoScrolling)return;
-autoScrolling=false;
-if(autoScrollRAF){cancelAnimationFrame(autoScrollRAF);autoScrollRAF=null}
-showToast('asOff');
-scheduleResume();
+function showHint(){
+  if(musicState.started||musicState.userPaused)return;
+  const t=T[lg];
+  musicHintEl.textContent=t.musicHint||'♪ Tap anywhere to start music';
+  musicHintEl.classList.add('v');
 }
 
-function scheduleResume(){
-clearTimeout(resumeTimer);
-resumeTimer=setTimeout(()=>{
-if(!atBottom()&&heroAnimDone){
-startAutoScroll();
-}
-},RESUME_DELAY);
-}
-
-function onUserInteract(){
-if(autoScrolling){
-pauseAutoScroll();
-}else{
-clearTimeout(resumeTimer);
-scheduleResume();
-}
-hideScrollInd();
+function tryAutoPlay(){
+  if(musicState.started||musicState.userPaused)return;
+  if(!musicState.loadAttempted){initAudio()}
+  const p=audioEl.play();
+  if(p!==undefined){
+    p.then(()=>{
+      musicSuccess();
+    }).catch(()=>{
+      audioEl.pause();
+      audioEl.currentTime=0;
+      showHint();
+      attachGestureListeners();
+    });
+  }
 }
 
-['wheel','mousedown','keydown'].forEach(ev=>{
-window.addEventListener(ev,onUserInteract,{passive:true});
-});
-['touchstart','touchmove','pointerdown'].forEach(ev=>{
-window.addEventListener(ev,onUserInteract,{passive:true});
-});
+function playOnGesture(){
+  if(musicState.started||musicState.userPaused)return;
+  audioEl.currentTime=0;
+  const p=audioEl.play();
+  if(p!==undefined){
+    p.then(()=>{
+      musicSuccess();
+    }).catch(()=>{
+      setTimeout(()=>{
+        if(!musicState.started&&!musicState.userPaused){
+          audioEl.play().then(()=>musicSuccess()).catch(()=>{});
+        }
+      },100);
+    });
+  }
+}
+
+const gestureEvents=['touchstart','touchend','click','pointerdown','pointerup','mousedown','scroll','wheel','keydown'];
+let gestureHandler=null;
+
+function attachGestureListeners(){
+  if(musicState.gestureListenersAttached)return;
+  musicState.gestureListenersAttached=true;
+  gestureHandler=function(e){
+    if(musicState.started||musicState.userPaused)return;
+    playOnGesture();
+  };
+  gestureEvents.forEach(ev=>{
+    document.addEventListener(ev,gestureHandler,{once:false,passive:true,capture:true});
+  });
+}
+
+function removeGestureListeners(){
+  if(!gestureHandler)return;
+  gestureEvents.forEach(ev=>{
+    document.removeEventListener(ev,gestureHandler,true);
+  });
+  musicState.gestureListenersAttached=false;
+  gestureHandler=null;
+}
+
+function tgM(){
+  if(musicState.playing){
+    audioEl.pause();
+    musicState.playing=false;
+    musicState.userPaused=true;
+    musBtnEl.classList.remove('p');
+    musBtnEl.title='Play Music';
+    hideHint();
+    removeGestureListeners();
+  }else{
+    musicState.userPaused=false;
+    audioEl.play().then(()=>{
+      musicState.started=true;
+      musicState.playing=true;
+      musBtnEl.classList.add('p');
+      musBtnEl.title='Pause Music';
+      hideHint();
+      removeGestureListeners();
+    }).catch(()=>{
+      showHint();
+      attachGestureListeners();
+    });
+  }
+}
+
+// ========== LANGUAGE ==========
+function dL(){return(navigator.language||'').toLowerCase().startsWith('mr')?'mr':'en'}
+function setL(l){lg=l;document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('a',b.dataset.l===l));apT();sW();
+if(!musicState.started&&!musicState.userPaused)showHint()}
+function apT(){const t=T[lg];document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(t[k]&&!['invT','giftT','htl'].includes(el.id))el.innerHTML=t[k]})}
+
+// ========== AUTO-SCROLL ==========
+const RESUME_DELAY=5000,SCROLL_SPEED=0.8;
+function showToast(key){const toast=document.getElementById('asToast');const t=T[lg];toast.textContent=t[key]||key;toast.classList.add('v');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('v'),2000)}
+function atBottom(){return(innerHeight+window.scrollY)>=(document.body.scrollHeight-5)}
+function startAutoScroll(){if(autoScrolling)return;autoScrolling=true;showToast('asOn');function step(){if(!autoScrolling)return;if(atBottom()){autoScrolling=false;return}window.scrollBy(0,SCROLL_SPEED);autoScrollRAF=requestAnimationFrame(step)}autoScrollRAF=requestAnimationFrame(step)}
+function pauseAutoScroll(){if(!autoScrolling)return;autoScrolling=false;if(autoScrollRAF){cancelAnimationFrame(autoScrollRAF);autoScrollRAF=null}showToast('asOff');scheduleResume()}
+function scheduleResume(){clearTimeout(resumeTimer);resumeTimer=setTimeout(()=>{if(!atBottom()&&heroAnimDone)startAutoScroll()},RESUME_DELAY)}
+function onUserInteract(){if(autoScrolling)pauseAutoScroll();else{clearTimeout(resumeTimer);scheduleResume()}hideScrollInd()}
+['wheel','mousedown','keydown'].forEach(ev=>{window.addEventListener(ev,onUserInteract,{passive:true})});
+['touchstart','touchmove','pointerdown'].forEach(ev=>{window.addEventListener(ev,onUserInteract,{passive:true})});
 
 // ========== SCROLL INDICATOR ==========
-function hideScrollInd(){
-if(scrollIndHidden)return;
-scrollIndHidden=true;
-const el=document.getElementById('scrollInd');
-el.style.opacity='0';
-setTimeout(()=>el.classList.remove('v'),600);
-}
+function hideScrollInd(){if(scrollIndHidden)return;scrollIndHidden=true;const el=document.getElementById('scrollInd');el.style.opacity='0';setTimeout(()=>el.classList.remove('v'),600)}
 window.addEventListener('scroll',()=>{if(window.scrollY>60)hideScrollInd()},{passive:true});
 
 // ========== PARTICLES ==========
-const pc=document.getElementById('pc'),px=pc.getContext('2d');
-const bcc=document.getElementById('bc'),bx=bcc.getContext('2d');
-const scc=document.getElementById('sc'),sx=scc.getContext('2d');
+const pcc=document.getElementById('pc'),pxx=pcc.getContext('2d');
+const bcc2=document.getElementById('bc'),bxx=bcc2.getContext('2d');
+const scc2=document.getElementById('sc'),sxx=scc2.getContext('2d');
 let gp=[],bk=[],sp2=[];
-function rz(){W=innerWidth;H=innerHeight;[pc,bcc,scc].forEach(c=>{c.width=W;c.height=H})}
-class GP{constructor(){this.rs()}rs(){this.x=Math.random()*W;this.y=Math.random()*H;this.s=Math.random()*1.8+.3;this.vx=(Math.random()-.5)*.18;this.vy=(Math.random()-.5)*.18;this.o=Math.random()*.3+.05;this.l=Math.random()*250+120;this.ml=this.l}u(){this.x+=this.vx;this.y+=this.vy;this.l--;if(this.l<=0||this.x<-10||this.x>W+10||this.y<-10||this.y>H+10)this.rs()}d(){const a=this.o*(this.l/this.ml>.5?1:this.l/this.ml*2);px.beginPath();px.arc(this.x,this.y,this.s,0,6.28);px.fillStyle=`rgba(225,198,153,${a})`;px.fill();px.beginPath();px.arc(this.x,this.y,this.s*3.5,0,6.28);px.fillStyle=`rgba(225,198,153,${a*.05})`;px.fill()}}
-class BK{constructor(){this.rs()}rs(){this.x=Math.random()*W;this.y=Math.random()*H;this.r=Math.random()*25+12;this.vx=(Math.random()-.5)*.1;this.vy=(Math.random()-.5)*.08;this.o=Math.random()*.03+.008;this.ph=Math.random()*6.28;this.sp=Math.random()*.004+.002}u(){this.x+=this.vx;this.y+=this.vy;this.ph+=this.sp;if(this.x<-40)this.x=W+40;if(this.x>W+40)this.x=-40;if(this.y<-40)this.y=H+40;if(this.y>H+40)this.y=-40}d(){const a=this.o*(Math.sin(this.ph)*.5+.5);const g=bx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r);g.addColorStop(0,`rgba(225,198,153,${a*2})`);g.addColorStop(.5,`rgba(225,198,153,${a})`);g.addColorStop(1,'transparent');bx.fillStyle=g;bx.beginPath();bx.arc(this.x,this.y,this.r,0,6.28);bx.fill()}}
-class SP{constructor(){this.rs()}rs(){this.x=Math.random()*W;this.y=Math.random()*H;this.s=Math.random()*2.5+.8;this.l=Math.random()*50+25;this.ml=this.l;this.rt=Math.random()*6.28}u(){this.l--;if(this.l<=0)this.rs()}d(){const p=1-this.l/this.ml;const a=p<.5?p*2:(1-p)*2;sx.save();sx.translate(this.x,this.y);sx.rotate(this.rt);sx.fillStyle=`rgba(225,198,153,${a*.5})`;sx.fillRect(-this.s,-.5,this.s*2,1);sx.fillRect(-.5,-this.s,1,this.s*2);sx.restore()}}
-function initFX(){rz();const m=W<768;for(let i=0;i<(m?30:50);i++)gp.push(new GP());for(let i=0;i<(m?5:10);i++)bk.push(new BK());for(let i=0;i<(m?12:25);i++)sp2.push(new SP());aFX()}
-function aFX(){px.clearRect(0,0,W,H);bx.clearRect(0,0,W,H);sx.clearRect(0,0,W,H);gp.forEach(p=>{p.u();p.d()});bk.forEach(b=>{b.u();b.d()});sp2.forEach(s=>{s.u();s.d()});requestAnimationFrame(aFX)}
+function rz(){W=innerWidth;H=innerHeight;[pcc,bcc2,scc2].forEach(c=>{c.width=W;c.height=H})}
+class GP{constructor(){this.rs()}rs(){this.x=Math.random()*W;this.y=Math.random()*H;this.s=Math.random()*1.8+.3;this.vx=(Math.random()-.5)*.18;this.vy=(Math.random()-.5)*.18;this.o=Math.random()*.3+.05;this.l=Math.random()*250+120;this.ml=this.l}u(){this.x+=this.vx;this.y+=this.vy;this.l--;if(this.l<=0||this.x<-10||this.x>W+10||this.y<-10||this.y>H+10)this.rs()}d(){const a=this.o*(this.l/this.ml>.5?1:this.l/this.ml*2);pxx.beginPath();pxx.arc(this.x,this.y,this.s,0,6.28);pxx.fillStyle=`rgba(225,198,153,${a})`;pxx.fill();pxx.beginPath();pxx.arc(this.x,this.y,this.s*3.5,0,6.28);pxx.fillStyle=`rgba(225,198,153,${a*.05})`;pxx.fill()}}
+class BK{constructor(){this.rs()}rs(){this.x=Math.random()*W;this.y=Math.random()*H;this.r=Math.random()*25+12;this.vx=(Math.random()-.5)*.1;this.vy=(Math.random()-.5)*.08;this.o=Math.random()*.03+.008;this.ph=Math.random()*6.28;this.sp=Math.random()*.004+.002}u(){this.x+=this.vx;this.y+=this.vy;this.ph+=this.sp;if(this.x<-40)this.x=W+40;if(this.x>W+40)this.x=-40;if(this.y<-40)this.y=H+40;if(this.y>H+40)this.y=-40}d(){const a=this.o*(Math.sin(this.ph)*.5+.5);const g=bxx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r);g.addColorStop(0,`rgba(225,198,153,${a*2})`);g.addColorStop(.5,`rgba(225,198,153,${a})`);g.addColorStop(1,'transparent');bxx.fillStyle=g;bxx.beginPath();bxx.arc(this.x,this.y,this.r,0,6.28);bxx.fill()}}
+class SPA{constructor(){this.rs()}rs(){this.x=Math.random()*W;this.y=Math.random()*H;this.s=Math.random()*2.5+.8;this.l=Math.random()*50+25;this.ml=this.l;this.rt=Math.random()*6.28}u(){this.l--;if(this.l<=0)this.rs()}d(){const p=1-this.l/this.ml;const a=p<.5?p*2:(1-p)*2;sxx.save();sxx.translate(this.x,this.y);sxx.rotate(this.rt);sxx.fillStyle=`rgba(225,198,153,${a*.5})`;sxx.fillRect(-this.s,-.5,this.s*2,1);sxx.fillRect(-.5,-this.s,1,this.s*2);sxx.restore()}}
+function initFX(){rz();const m=W<768;for(let i=0;i<(m?30:50);i++)gp.push(new GP());for(let i=0;i<(m?5:10);i++)bk.push(new BK());for(let i=0;i<(m?12:25);i++)sp2.push(new SPA());aFX()}
+function aFX(){pxx.clearRect(0,0,W,H);bxx.clearRect(0,0,W,H);sxx.clearRect(0,0,W,H);gp.forEach(p=>{p.u();p.d()});bk.forEach(b=>{b.u();b.d()});sp2.forEach(s=>{s.u();s.d()});requestAnimationFrame(aFX)}
 
 function mkP(t){const p=document.createElement('div');p.className='petal';const sz=Math.random()*12+6;p.style.width=sz+'px';p.style.height=sz+'px';const h=Math.random()>.5?38:32,s=Math.random()*20+50,l=Math.random()*15+78;p.innerHTML=`<svg viewBox="0 0 24 24" fill="hsla(${h},${s}%,${l}%,.4)"><ellipse cx="12" cy="12" rx="7" ry="11" transform="rotate(${Math.random()*360} 12 12)"/></svg>`;if(t==='w'){p.style.left='-5vw';p.style.top=Math.random()*80+'vh';const d=Math.random()*7+5;p.style.animation=`pw ${d}s linear ${Math.random()*2}s 1`;setTimeout(()=>p.remove(),(d+2)*1e3)}else{p.style.left=Math.random()*100+'vw';const d=Math.random()*9+6;p.style.animation=`pf ${d}s linear ${Math.random()*2}s 1`;setTimeout(()=>p.remove(),(d+2)*1e3)}document.body.appendChild(p)}
 function stP(){setInterval(()=>mkP('f'),1600);setInterval(()=>mkP('w'),3500);for(let i=0;i<4;i++)setTimeout(()=>mkP('f'),i*300)}
@@ -547,7 +579,7 @@ function mkSt(){const s=document.createElement('div');s.className='star';s.style
 function stSt(){for(let i=0;i<(W<768?8:16);i++)setTimeout(mkSt,i*350)}
 function mkR(){const c=document.getElementById('hRays');for(let i=0;i<6;i++){const r=document.createElement('div');r.className='h-ray';r.style.height=Math.random()*30+40+'%';r.style.animationDuration=Math.random()*6+12+'s';r.style.animationDelay=i*.3+'s';r.style.transform=`rotate(${i*60}deg)`;c.appendChild(r)}}
 
-// ========== HERO ANIMATION ==========
+// ========== HERO ==========
 function animH(){const t=T[lg];let d=200;mkR();
 setTimeout(()=>{const e=document.getElementById('hp1');e.textContent=t.hp1;e.classList.add('v')},d);d+=300;
 const gn='Sagar',ge=document.getElementById('hg');ge.innerHTML='';
@@ -566,29 +598,27 @@ d+=ws.length*100+200;
 setTimeout(()=>document.getElementById('hCt').classList.add('v'),d);d+=300;
 setTimeout(()=>{
 document.getElementById('lang').classList.add('v');
-document.getElementById('mus').classList.add('v');
+musBtnEl.classList.add('v');
 document.getElementById('scrollInd').classList.add('v');
 heroAnimDone=true;
-tryPlayMusic();
-// Start auto-scroll after hero animation
-setTimeout(()=>{if(!atBottom())startAutoScroll()},2500);
+// Try autoplay after hero animation
+tryAutoPlay();
+setTimeout(()=>{if(!atBottom())startAutoScroll()},2500)
 },d)}
 
 // ========== SCROLL ANIMATIONS ==========
 function initSA(){const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});document.querySelectorAll('.an,.as,.tli,.dl,.spk,.loc-ic').forEach(e=>o.observe(e))}
-
 function sW(){const t=T[lg];
 const inv=document.getElementById('invT');if(inv){const w=t.iT.split(' ');inv.innerHTML=w.map(x=>`<span class="w">${x}</span>`).join('');const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.w').forEach((s,i)=>setTimeout(()=>s.classList.add('v'),i*80));o.unobserve(e.target)}})},{threshold:.2});o.observe(inv)}
 const gt=document.getElementById('giftT');if(gt){const w=t.gT.split(' ');gt.innerHTML=w.map(x=>`<span class="w">${x}</span>`).join('');const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.w').forEach((s,i)=>setTimeout(()=>s.classList.add('v'),i*100));o.unobserve(e.target)}})},{threshold:.2});o.observe(gt)}}
 
-function initScr(){const cv=document.getElementById('scr-c'),bx2=document.getElementById('scrBox');if(!cv||!bx2)return;const ctx=cv.getContext('2d'),r=bx2.getBoundingClientRect();cv.width=r.width;cv.height=r.height;
+function initScr(){const cv=document.getElementById('scr-c'),bx=document.getElementById('scrBox');if(!cv||!bx)return;const ctx=cv.getContext('2d'),r=bx.getBoundingClientRect();cv.width=r.width;cv.height=r.height;
 const g=ctx.createLinearGradient(0,0,cv.width,cv.height);g.addColorStop(0,'#0d6b3e');g.addColorStop(.5,'#0a5530');g.addColorStop(1,'#0d6b3e');ctx.fillStyle=g;ctx.fillRect(0,0,cv.width,cv.height);
 ctx.fillStyle='rgba(225,198,153,.06)';for(let i=0;i<150;i++){ctx.beginPath();ctx.arc(Math.random()*cv.width,Math.random()*cv.height,Math.random()*1.5,0,6.28);ctx.fill()}
 ctx.fillStyle='rgba(225,198,153,.5)';ctx.font='12px Poppins,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lg==='mr'?'✨ तारीख प्रकट होत आहे ✨':'✨ Revealing... ✨',cv.width/2,cv.height/2);
-const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!scratchDone){scratchDone=true;autoReveal(cv,ctx);obs.unobserve(e.target)}})},{threshold:.4});obs.observe(bx2)}
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!scratchDone){scratchDone=true;autoReveal(cv,ctx);obs.unobserve(e.target)}})},{threshold:.4});obs.observe(bx)}
 function autoReveal(cv,ctx){ctx.globalCompositeOperation='destination-out';let step=0;const total=40,cw=cv.width,ch=cv.height;
-function reveal(){if(step>=total){cv.style.transition='opacity .5s';cv.style.opacity='0';setTimeout(()=>cv.style.display='none',500);return}
-const p=step/total,x=p*cw;ctx.beginPath();ctx.ellipse(x,ch/2,cw/total+10,ch*.6,0,0,6.28);ctx.fill();for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(Math.random()*cw,Math.random()*ch,15,0,6.28);ctx.fill()}step++;requestAnimationFrame(reveal)}reveal()}
+function reveal(){if(step>=total){cv.style.transition='opacity .5s';cv.style.opacity='0';setTimeout(()=>cv.style.display='none',500);return}const p=step/total,x=p*cw;ctx.beginPath();ctx.ellipse(x,ch/2,cw/total+10,ch*.6,0,0,6.28);ctx.fill();for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(Math.random()*cw,Math.random()*ch,15,0,6.28);ctx.fill()}step++;requestAnimationFrame(reveal)}reveal()}
 
 function imgErr(img){img.parentElement.innerHTML=`<div class="img-ph"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg><p style="font:italic 16px 'Cormorant Garamond',serif;color:var(--gd)">Sagar & Seema</p></div><div class="img-ov"><p>Our Forever Begins Here.</p></div>`}
 
@@ -604,19 +634,14 @@ const d=Math.floor(df/864e5),h=Math.floor(df%864e5/36e5),m=Math.floor(df%36e5/6e
 aN2('cDD',String(d).padStart(2,'0'));aN2('cDH',String(h).padStart(2,'0'));aN2('cDM',String(m).padStart(2,'0'));aN2('cDS',String(s).padStart(2,'0'))}
 function aN2(id,v){const e=document.getElementById(id);if(e.textContent!==v){e.style.transform='translateY(-3px)';e.style.opacity='.4';setTimeout(()=>{e.textContent=v;e.style.transform='none';e.style.opacity='1'},100);e.style.transition='transform .2s,opacity .2s'}}
 
-function stCele(){
-document.getElementById('cdDisp').style.display='none';
-document.getElementById('cdP').style.display='none';
-document.getElementById('celeB').classList.add('a');
-document.getElementById('celeOv').classList.add('a');
+function stCele(){document.getElementById('cdDisp').style.display='none';document.getElementById('cdP').style.display='none';document.getElementById('celeB').classList.add('a');document.getElementById('celeOv').classList.add('a');
 setTimeout(()=>{document.getElementById('celeOv').style.transition='opacity 2s';document.getElementById('celeOv').style.opacity='0';setTimeout(()=>document.getElementById('celeOv').classList.remove('a'),2e3)},6e3);
 celeRunning=true;stConf();stFW();stCP()}
 function stCP(){if(!celeRunning)return;for(let i=0;i<3;i++)mkP('f');setTimeout(stCP,800)}
 function stConf(){const c=document.getElementById('clc'),ctx=c.getContext('2d');c.width=W;c.height=H;c.style.display='block';c.style.opacity='1';
 const cols=['#E1C699','#f0dbb8','#c4a46e','#FFD700','#FFF8DC','#0A5C36','#fff'];const cf=[];
 class C{constructor(){this.x=Math.random()*W;this.y=Math.random()*H-H;this.sz=Math.random()*7+3;this.c=cols[Math.floor(Math.random()*cols.length)];this.vy=Math.random()*2.5+1;this.vx=(Math.random()-.5)*2;this.r=Math.random()*360;this.rv=(Math.random()-.5)*8;this.o=Math.random()*.6+.3}u(){this.y+=this.vy;this.x+=this.vx;this.r+=this.rv;if(this.y>H+15){this.y=-15;this.x=Math.random()*W}}d(){ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.r*Math.PI/180);ctx.globalAlpha=this.o;ctx.fillStyle=this.c;ctx.fillRect(-this.sz/2,-this.sz/4,this.sz,this.sz/2);ctx.restore()}}
-for(let i=0;i<150;i++)cf.push(new C());
-function dr(){if(!celeRunning)return;ctx.clearRect(0,0,c.width,c.height);cf.forEach(x=>{x.u();x.d()});requestAnimationFrame(dr)}dr()}
+for(let i=0;i<150;i++)cf.push(new C());function dr(){if(!celeRunning)return;ctx.clearRect(0,0,c.width,c.height);cf.forEach(x=>{x.u();x.d()});requestAnimationFrame(dr)}dr()}
 function stFW(){const c=document.getElementById('fwc'),ctx=c.getContext('2d');c.width=W;c.height=H;c.style.display='block';c.style.opacity='1';
 const fws=[],pts=[];
 class FW{constructor(){this.x=Math.random()*W;this.y=H;this.ty=Math.random()*H*.35+H*.1;this.vy=-Math.random()*4-5;this.done=false;this.c=`hsl(${Math.random()*50+25},75%,65%)`}u(){this.y+=this.vy;this.vy+=.07;if(this.y<=this.ty||this.vy>=0){this.done=true;const n=Math.random()*25+25;for(let i=0;i<n;i++){const a=Math.random()*6.28,v=Math.random()*3.5+1;pts.push({x:this.x,y:this.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:Math.random()*35+25,ml:60,c:this.c,s:Math.random()*2+.5})}}}d(){ctx.beginPath();ctx.arc(this.x,this.y,2,0,6.28);ctx.fillStyle=this.c;ctx.fill()}}
@@ -628,11 +653,18 @@ function initPx(){window.addEventListener('scroll',()=>{const f=document.getElem
 function openD(){document.getElementById('dov').classList.add('a')}
 function closeD(e){if(e.target===document.getElementById('dov'))document.getElementById('dov').classList.remove('a')}
 
+// ========== INIT ==========
 window.addEventListener('load',()=>{
-lg=dL();document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('a',b.dataset.l===lg));
-apT();initFX();stP();stSt();initPx();initSA();sW();stCD();
-setTimeout(animH,300);setTimeout(initScr,1500);
-tryPlayMusic();
+  lg=dL();
+  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('a',b.dataset.l===lg));
+  initAudio();
+  apT();initFX();stP();stSt();initPx();initSA();sW();stCD();
+  setTimeout(animH,300);
+  setTimeout(initScr,1500);
+  // Attempt autoplay immediately
+  setTimeout(tryAutoPlay,500);
+  // Second attempt
+  setTimeout(tryAutoPlay,1500);
 });
 window.addEventListener('resize',rz);
 </script>
