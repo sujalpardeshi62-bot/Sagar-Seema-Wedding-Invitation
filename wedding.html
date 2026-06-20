@@ -782,57 +782,59 @@ draw()
 }
 function stopLightboxSparkles(){if(lbSparkleAnim)cancelAnimationFrame(lbSparkleAnim)}
 
-// ===== HERO ANIMATION =====
+// ===== HERO ANIMATION - FAST START =====
 let heroPlayed=false;
 function animateHero(){
 if(heroPlayed)return;heroPlayed=true;
 const t=T[lang];let d=0;
 createLightRays();
 
-d+=800;
+// FASTER START: Reduced from 800ms to 500ms
+d+=500;
 setTimeout(()=>{document.getElementById('floralLeft').classList.add('visible');document.getElementById('floralRight').classList.add('visible')},d);
-// Show light rays
-setTimeout(()=>{document.querySelectorAll('.light-ray').forEach(r=>r.style.opacity=r.style.background?'1':'0')},d+500);
+setTimeout(()=>{document.querySelectorAll('.light-ray').forEach(r=>r.style.opacity=r.style.background?'1':'0')},d+300);
 
-d+=600;
+// FASTER: Reduced from 600ms to 400ms
+d+=400;
 const famEl=document.getElementById('heroFamilies');
 const famText=t.heroFamilies;famEl.innerHTML='';
 for(let i=0;i<famText.length;i++){
 const s=document.createElement('span');s.className='letter';
 s.textContent=famText[i]===' '?'\u00A0':famText[i];
-famEl.appendChild(s);setTimeout(()=>s.classList.add('visible'),d+i*60)
+famEl.appendChild(s);setTimeout(()=>s.classList.add('visible'),d+i*40) // Faster letter animation
 }
 
-d+=famText.length*60+300;
+// FASTER: Reduced delays throughout
+d+=famText.length*40+200; // was 300
 setTimeout(()=>document.getElementById('heroDeco1').classList.add('visible'),d);
 
-d+=400;
+d+=250; // was 400
 setTimeout(()=>{const el=document.getElementById('heroParent1');el.textContent=t.heroParent1;el.classList.add('visible')},d);
 
-d+=600;
-setTimeout(()=>{document.getElementById('heroGroom').classList.add('visible');setTimeout(()=>burstPetals(document.getElementById('heroGroom')),400)},d);
+d+=350; // was 600
+setTimeout(()=>{document.getElementById('heroGroom').classList.add('visible');setTimeout(()=>burstPetals(document.getElementById('heroGroom')),300)},d);
 
-d+=700;
+d+=400; // was 700
 setTimeout(()=>document.getElementById('heroAnd').classList.add('visible'),d);
 
-d+=600;
-setTimeout(()=>{document.getElementById('heroBride').classList.add('visible');setTimeout(()=>burstPetals(document.getElementById('heroBride')),400)},d);
+d+=350; // was 600
+setTimeout(()=>{document.getElementById('heroBride').classList.add('visible');setTimeout(()=>burstPetals(document.getElementById('heroBride')),300)},d);
 
-d+=700;
+d+=400; // was 700
 setTimeout(()=>{const el=document.getElementById('heroParent2');el.textContent=t.heroParent2;el.classList.add('visible')},d);
 
-d+=400;
+d+=250; // was 400
 setTimeout(()=>document.getElementById('heroDeco2').classList.add('visible'),d);
 
-d+=500;
+d+=300; // was 500
 const tagEl=document.getElementById('heroTagline');
 const tagWords=t.heroTagline.split(' ');
 tagEl.innerHTML=tagWords.map(w=>`<span class="word">${w}</span>`).join('');
 const tagSpans=tagEl.querySelectorAll('.word');
-tagSpans.forEach((s,i)=>setTimeout(()=>s.classList.add('visible'),d+i*130));
-setTimeout(()=>sparkleWaveText(tagEl),d+tagWords.length*130+200);
+tagSpans.forEach((s,i)=>setTimeout(()=>s.classList.add('visible'),d+i*80)); // Faster word animation
+setTimeout(()=>sparkleWaveText(tagEl),d+tagWords.length*80+150);
 
-d+=tagWords.length*130+600;
+d+=tagWords.length*80+400; // was 600
 setTimeout(()=>document.getElementById('heroBtn').classList.add('visible'),d);
 }
 
@@ -1011,7 +1013,8 @@ window.addEventListener('load',()=>{
 lang=detectLang();
 document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.l===lang));
 applyT();initFX();startPetals();startStars();initParallax();
-setTimeout(animateHero,600)
+// FASTER: Reduced from 600ms to 300ms
+setTimeout(animateHero,300)
 });
 window.addEventListener('resize',resizeAll);
 document.addEventListener('touchmove',e=>{if(document.body.classList.contains('no-scroll'))e.preventDefault()},{passive:false});
